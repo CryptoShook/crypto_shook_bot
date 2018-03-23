@@ -1,8 +1,9 @@
-import config
 from flask import Flask
 from flask import request
+import config
 import json
 import utils
+import texts
 
 import telegram
 
@@ -62,6 +63,15 @@ def new_member_greeting(message_json):
     pass
 
 
+def handle_new_message(message_json):
+    chat_id = message_json['message']['chat']['id']
+    message_id = message_json['message']['message_id']
+
+    bot.send_message(chat_id, texts.msg_welcome)
+
+    pass
+
+
 def process_from_chat(message_json):
     new_chat_member = utils.get_new_chat_member(message_json)
     left_chat_member = utils.get_left_chat_member(message_json)
@@ -73,6 +83,7 @@ def process_from_chat(message_json):
     if left_chat_member:
         handle_left_member(message_json)
     if message:
+        handle_new_message(message_json)
         print('new message: \n{}'.format(message))
     pass
 
