@@ -1,4 +1,5 @@
 import pickle
+import json
 
 from config import left_members_db
 
@@ -25,9 +26,23 @@ def get_left_chat_member(message_json):
 
 def get_message(message_json):
     try:
-        message = message_json['message']['text']
-        print('message_text: '.format(message))
-        return message
+        return message_json['message']['text']
+    except Exception:
+        # TODO create Exception object (◕‿‿◕｡)
+        return None
+
+
+def get_chat_id(message_json):
+    try:
+        return str(message_json['message']['chat']['id'])
+    except Exception:
+        # TODO create Exception object (◕‿‿◕｡)
+        return None
+
+
+def get_photo(message_json):
+    try:
+        return str(message_json['message']['photo'])
     except Exception:
         # TODO create Exception object (◕‿‿◕｡)
         return None
@@ -77,3 +92,7 @@ def is_new_user(uid):
         # TODO create Exception object (◕‿‿◕｡)
         return True
 
+
+def write_json(data, filename='answer.json'):
+    with open(filename, 'w') as f:
+        json.dump(data, f, indent=2, ensure_ascii=False)

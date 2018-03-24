@@ -1,5 +1,7 @@
 from flask import Flask
 from flask import request
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup
+
 import config
 import json
 import utils
@@ -13,10 +15,6 @@ bot = telegram.Bot(token=config.cryptoShook_bot_token)
 
 app = Flask(__name__)
 
-
-def write_json(data, filename='answer.json'):
-    with open(filename, 'w') as f:
-        json.dump(data, f, indent=2, ensure_ascii=False)
 
 
 def is_new_chat_member(message_json):
@@ -67,7 +65,13 @@ def handle_new_message(message_json):
     chat_id = message_json['message']['chat']['id']
     message_id = message_json['message']['message_id']
 
-    bot.send_message(chat_id, texts.msg_welcome)
+    # keyboard = [[InlineKeyboardButton("Refresh total clicks")]]
+    # reply_markup = InlineKeyboardMarkup(keyboard)
+    #
+    # # bot.send_message(chat_id, texts.msg_welcome)
+    bot.send_message(chat_id=chat_id,
+                     text=texts.msg_news,
+                     parse_mode=telegram.ParseMode.MARKDOWN)
 
     pass
 
@@ -111,7 +115,7 @@ def process_new_message(message_json):
 def index():
     if request.method == 'POST':
         json_request = request.get_json()
-        write_json(json_request, 'msgs.message_{}'.format(json_request['update_id']))
+        utils.write_json(json_request, 'msgs.message_{}'.format(json_request['update_id']))
         print('new message json:\n{}\n'.format(json_request))
 
         process_new_message(json_request)
